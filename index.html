@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Городская карта</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,11 +20,29 @@
                 <button type="button" id="open-profile-setup">Заполнить профиль</button>
             </div>
             <div class="draw-toolbar" aria-label="Инструменты карты">
-                <span class="draw-hint">Кликните по карте · двойной клик завершает</span>
+                <span class="draw-hint">Отметьте точки и нажмите «Готово»</span>
                 <button class="draw-tool active" id="draw-area-btn" title="Нарисовать площадь" aria-label="Нарисовать площадь"><i class="ti ti-polygon"></i><span>Площадь</span></button>
                 <button class="draw-tool" id="draw-line-btn" title="Нарисовать линию" aria-label="Нарисовать линию"><i class="ti ti-line"></i><span>Линия</span></button>
+                <button class="draw-finish-btn" id="finish-drawing-btn" type="button" hidden><i class="ti ti-check"></i><span>Готово</span></button>
             </div>
             <div class="map-controls">
+                <label class="city-select-wrap" aria-label="Выбрать город">
+                    <i class="ti ti-building-community" aria-hidden="true"></i>
+                    <select id="city-select" aria-label="Город на карте">
+                        <option value="stavropol">Ставрополь</option>
+                        <option value="pyatigorsk">Пятигорск</option>
+                        <option value="kislovodsk">Кисловодск</option>
+                        <option value="nevinnomyssk">Невинномысск</option>
+                        <option value="essentuki">Ессентуки</option>
+                        <option value="mineralnye-vody">Минеральные Воды</option>
+                        <option value="georgievsk">Георгиевск</option>
+                        <option value="mikhailovsk">Михайловск</option>
+                        <option value="budyonnovsk">Будённовск</option>
+                        <option value="izobilny">Изобильный</option>
+                        <option value="zheleznovodsk">Железноводск</option>
+                        <option value="svetlograd">Светлоград</option>
+                    </select>
+                </label>
                 <button class="map-control-btn" id="map-type-btn" title="Сменить подложку" aria-label="Сменить подложку"><i class="ti ti-satellite"></i></button>
             </div>
         </div>

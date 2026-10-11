@@ -25,6 +25,21 @@ let locationRequestToken = 0;
 const GEOCODE_CACHE_KEY = 'citymap_geocode_cache';
 let dialogResolver = null;
 
+const CITIES = {
+    stavropol: { name: 'Ставрополь', center: [45.0448, 41.9691], zoom: 12 },
+    pyatigorsk: { name: 'Пятигорск', center: [44.0486, 43.0594], zoom: 12 },
+    kislovodsk: { name: 'Кисловодск', center: [43.9052, 42.7168], zoom: 12 },
+    nevinnomyssk: { name: 'Невинномысск', center: [44.6333, 41.9333], zoom: 12 },
+    essentuki: { name: 'Ессентуки', center: [44.0444, 42.8589], zoom: 12 },
+    'mineralnye-vody': { name: 'Минеральные Воды', center: [44.2103, 43.1353], zoom: 12 },
+    georgievsk: { name: 'Георгиевск', center: [44.1486, 43.4739], zoom: 12 },
+    mikhailovsk: { name: 'Михайловск', center: [45.1297, 42.0288], zoom: 12 },
+    budyonnovsk: { name: 'Будённовск', center: [44.7814, 44.1658], zoom: 12 },
+    izobilny: { name: 'Изобильный', center: [45.3694, 41.7086], zoom: 12 },
+    zheleznovodsk: { name: 'Железноводск', center: [44.1394, 43.0197], zoom: 12 },
+    svetlograd: { name: 'Светлоград', center: [45.3286, 42.8567], zoom: 12 }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     loadData();
     initMap();
@@ -72,12 +87,14 @@ function saveData() {
 }
 
 function initMap() {
-    const defaultCenter = [45.0448, 41.9691];
-    const defaultZoom = 12;
+    const citySelect = document.getElementById('city-select');
+    const savedCity = CITIES[settings.city] ? settings.city : 'stavropol';
+    const initialCity = CITIES[savedCity];
+    citySelect.value = savedCity;
 
     map = L.map('map', {
         zoomControl: true
-    }).setView(defaultCenter, defaultZoom);
+    }).setView(initialCity.center, initialCity.zoom);
 
     const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         attribution: 'Esri',
@@ -95,6 +112,13 @@ function initMap() {
     window.currentLayer = 'satellite';
 
     document.getElementById('map-type-btn').addEventListener('click', toggleMapType);
+    citySelect.addEventListener('change', () => {
+        const city = CITIES[citySelect.value];
+        if (!city) return;
+        settings.city = citySelect.value;
+        localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+        map.flyTo(city.center, city.zoom, { duration: 0.7 });
+    });
 
     renderParcels();
 }
@@ -154,6 +178,8 @@ function initDrawing() {
         });
     });
 
+    document.getElementById('finish-drawing-btn').addEventListener('click', finishDrawing);
+
     map.on('click', function(e) {
         if (profileConfigured && isDrawing && drawingManager && e.originalEvent.detail !== 2) {
             drawingManager.addPoint(e.latlng);
@@ -171,6 +197,7 @@ function initDrawing() {
 function startDrawing() {
     if (!profileConfigured) return showProfileRequiredNotice();
     isDrawing = true;
+    document.getElementById('finish-drawing-btn').hidden = false;
     document.querySelectorAll('.draw-tool').forEach(button => button.classList.toggle('drawing', button.classList.contains('active')));
     
     drawingManager = {
@@ -226,6 +253,7 @@ function finishDrawing() {
 
 function cancelDrawing() {
     isDrawing = false;
+    document.getElementById('finish-drawing-btn').hidden = true;
     document.querySelectorAll('.draw-tool').forEach(button => button.classList.remove('drawing'));
     if (drawingManager) {
         if (drawingManager.preview) map.removeLayer(drawingManager.preview);

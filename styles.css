@@ -959,6 +959,76 @@ body {
   .draw-toolbar { bottom: 90px; }
 }
 
+@media (max-width: 640px) {
+  .app-container { height: 100vh; }
+  @supports (height: 100dvh) {
+    .app-container { height: 100dvh; }
+  }
+
+  #tab-notes, #tab-profile { min-height: 0; }
+  .notes-list, .profile-form {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .draw-toolbar {
+    right: 12px;
+    left: 12px;
+    width: auto;
+    justify-content: stretch;
+    gap: 3px;
+    transform: none;
+  }
+  .draw-tool, .draw-finish-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 48px;
+    gap: 5px;
+    padding: 8px 5px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .draw-tool .ti, .draw-finish-btn .ti { font-size: 15px; }
+
+  .map-control-btn { width: 44px; min-width: 44px; height: 44px; }
+  .leaflet-control-zoom a,
+  .leaflet-control-zoom a:hover {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 44px !important;
+    font-size: 21px !important;
+  }
+
+  #search-input,
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .filters-panel select,
+  .setting-item select { font-size: 16px; }
+
+  .tab-bar { min-height: 58px; }
+  .tab-btn { min-height: 48px; }
+  .icon-btn { min-height: 44px; }
+  .close-btn { width: 44px; height: 44px; }
+  .form-actions button, .dialog-actions button { min-height: 44px; }
+  .modal-content { max-height: 85vh; max-height: min(88dvh, 760px); }
+  #parcel-form { padding: 16px; }
+}
+
+@media (max-width: 360px) {
+  .draw-toolbar { right: 8px; left: 8px; padding: 3px; }
+  .draw-tool, .draw-finish-btn { gap: 3px; padding-right: 3px; padding-left: 3px; font-size: 11px; }
+  .draw-hint { max-width: calc(100vw - 24px); font-size: 10px; }
+  .notes-header h2, .profile-header h2 { font-size: 19px; }
+  .notes-header p, .profile-header p { font-size: 11px; }
+  .notes-header, .profile-header { padding-right: 12px; padding-left: 12px; }
+  .search-bar, .notes-list { padding-right: 12px; padding-left: 12px; }
+  .filters-panel { margin-right: 12px; margin-left: 12px; }
+  .setting-item { gap: 8px; padding: 9px 10px; }
+  .setting-item span { max-width: 48%; font-size: 12px; }
+  .setting-item select { min-width: 0; width: 52%; }
+}
+
 .loading {
   display: flex;
   align-items: center;
@@ -1092,6 +1162,27 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .draw-tool.active:hover { background: #1d4ed8; }
 .draw-tool.drawing { box-shadow: inset 0 0 0 2px #a1a1aa; }
 .draw-tool .ti { font-size: 16px; }
+.draw-finish-btn {
+  display: inline-flex;
+  min-width: 104px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 14px;
+  border: 0;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+.draw-finish-btn:hover { background: #1d4ed8; }
+.draw-finish-btn:active { transform: scale(0.97); }
+.draw-finish-btn .ti { font-size: 16px; }
+.draw-finish-btn[hidden] { display: none; }
 .draw-hint {
   bottom: calc(100% + 9px);
   padding: 6px 9px;
@@ -1368,6 +1459,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   .map-control-btn span { display: none; }
   .draw-toolbar { bottom: max(12px, env(safe-area-inset-bottom)); }
   .draw-tool { min-width: 104px; padding: 10px 12px; }
+  .draw-tool, .draw-finish-btn { min-height: 44px; }
+  .draw-finish-btn { min-width: 112px; }
   .draw-hint { max-width: calc(100vw - 32px); white-space: normal; width: max-content; text-align: center; }
   .notes-header, .profile-header { padding: 20px 16px 14px; }
   .search-bar { padding: 0 16px 12px; }
@@ -1441,4 +1534,172 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 @media (max-width: 640px) {
   .filters-panel select { width: 100%; flex-basis: auto; }
   .setting-item select { width: min(52%, 190px); min-width: 125px; }
+}
+
+/* Final phone-specific overrides (kept after component styles) */
+.city-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 176px;
+  height: 40px;
+  padding: 0 10px;
+  border: 1px solid rgb(228 228 231 / 0.9);
+  border-radius: 9px;
+  background: var(--card, #fff);
+  color: #2563eb;
+  box-shadow: 0 2px 8px rgb(24 24 27 / 0.08);
+}
+.city-select-wrap > .ti { flex: 0 0 auto; font-size: 16px; }
+.city-select-wrap select {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 20px 0 0;
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  color: #27272a;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.city-select-wrap select:focus { outline: none; }
+.city-select-wrap::after {
+  position: absolute;
+  right: 9px;
+  top: 50%;
+  color: #71717a;
+  content: '⌄';
+  font-size: 15px;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateY(-60%);
+}
+
+@media (max-width: 640px) {
+  .city-select-wrap { min-width: 0; width: min(190px, calc(100vw - 92px)); }
+  .draw-toolbar { right: 12px; left: 12px; width: auto; transform: none; gap: 3px; }
+  .draw-tool, .draw-finish-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 48px;
+    padding: 8px 5px;
+  }
+  #search-input,
+  .form-group input,
+  .form-group select,
+  .form-group textarea,
+  .filters-panel select,
+  .setting-item select { font-size: 16px; }
+
+  .form-actions button, .dialog-actions button,
+  .profile-lock-banner button, .lookup-location-btn { min-height: 44px; }
+  .modal-content .form-actions {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+}
+@media (max-width: 360px) {
+  .city-select-wrap { width: min(168px, calc(100vw - 84px)); }
+  .draw-toolbar { right: 8px; left: 8px; padding: 3px; }
+  .draw-tool, .draw-finish-btn { gap: 3px; padding-right: 3px; padding-left: 3px; font-size: 11px; }
+}
+
+/* Mobile map controls: generous touch targets with a clear top-to-bottom order */
+@media (max-width: 640px) {
+  .map-controls {
+    top: 12px;
+    right: 12px;
+    left: 12px;
+    align-items: flex-end;
+    gap: 8px;
+    pointer-events: none;
+  }
+  .map-controls > * { pointer-events: auto; }
+  .city-select-wrap {
+    align-self: stretch;
+    width: auto;
+    height: 48px;
+    gap: 10px;
+    padding: 0 14px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgb(24 24 27 / 0.12);
+  }
+  .city-select-wrap > .ti { font-size: 19px; }
+  .city-select-wrap select { font-size: 15px; }
+  .city-select-wrap::after { right: 14px; font-size: 17px; }
+
+  .map-control-btn {
+    width: 48px;
+    min-width: 48px;
+    height: 48px;
+    margin-right: 0;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgb(24 24 27 / 0.12);
+  }
+  .leaflet-top.leaflet-left {
+    top: 120px;
+    right: 12px;
+    left: auto;
+  }
+  .leaflet-control-zoom {
+    overflow: hidden;
+    border: 1px solid rgb(228 228 231 / 0.9) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 10px rgb(24 24 27 / 0.12) !important;
+  }
+  .leaflet-control-zoom a,
+  .leaflet-control-zoom a:hover {
+    width: 48px !important;
+    height: 48px !important;
+    line-height: 46px !important;
+    border: 0 !important;
+    background: #fff !important;
+    color: #27272a !important;
+    font-size: 23px !important;
+  }
+  .leaflet-control-zoom-in { border-bottom: 1px solid #e4e4e7 !important; }
+
+  .draw-toolbar {
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+    left: 12px;
+    min-height: 64px;
+    justify-content: stretch;
+    gap: 8px;
+    padding: 6px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgb(24 24 27 / 0.16);
+  }
+  .draw-tool, .draw-finish-btn {
+    min-width: 0;
+    min-height: 52px;
+    justify-content: center;
+    flex: 1 1 0;
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 11px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .draw-tool .ti, .draw-finish-btn .ti { font-size: 20px; }
+  .draw-tool:not(.active) { color: #52525b; background: #f4f4f5; }
+  .draw-tool.active { background: #2563eb; color: #fff; }
+  .draw-hint {
+    bottom: calc(100% + 10px);
+    max-width: calc(100vw - 32px);
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 360px) {
+  .map-controls { right: 10px; left: 10px; }
+  .leaflet-top.leaflet-left { right: 10px; }
+  .draw-toolbar { right: 10px; left: 10px; gap: 6px; }
+  .draw-tool, .draw-finish-btn { gap: 5px; padding-right: 8px; padding-left: 8px; font-size: 13px; }
 }
