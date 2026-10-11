@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Городская карта</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+</head>
+<body>
+    <div class="app-container">
+        <div class="tab-content" id="tab-map">
+            <div id="map"></div>
+            <div class="profile-lock-banner" id="profile-lock-banner" hidden>
+                <span>Заполните профиль, чтобы добавлять и редактировать объекты.</span>
+                <button type="button" id="open-profile-setup">Заполнить профиль</button>
+            </div>
+            <div class="draw-toolbar" aria-label="Инструменты карты">
+                <span class="draw-hint">Кликните по карте · двойной клик завершает</span>
+                <button class="draw-tool active" id="draw-area-btn" title="Нарисовать площадь" aria-label="Нарисовать площадь"><i class="ti ti-polygon"></i><span>Площадь</span></button>
+                <button class="draw-tool" id="draw-line-btn" title="Нарисовать линию" aria-label="Нарисовать линию"><i class="ti ti-line"></i><span>Линия</span></button>
+            </div>
+            <div class="map-controls">
+                <button class="map-control-btn" id="map-type-btn" title="Сменить подложку" aria-label="Сменить подложку"><i class="ti ti-satellite"></i></button>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-notes" style="display: none;">
+            <div class="notes-header">
+                <div><h2>Объекты</h2><p>Инженерная инфраструктура города</p></div>
+                <button class="icon-btn" id="filter-btn" aria-label="Показать фильтры" title="Фильтры"><i class="ti ti-adjustments-horizontal"></i><span>Фильтры</span></button>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Номер, тип объекта или описание">
+            </div>
+            <div class="filters-panel" id="filters-panel" style="display: none;">
+                <select id="filter-field">
+                    <option value="">Все номера</option>
+                </select>
+                <select id="filter-culture">
+                    <option value="">Все объекты</option>
+                </select>
+                <button class="apply-filter-btn" id="apply-filter"><i class="ti ti-check"></i> Применить</button>
+                <button class="clear-filter-btn" id="clear-filter"><i class="ti ti-x"></i> Очистить</button>
+            </div>
+            <div class="notes-list" id="notes-list">
+                <div class="empty-state">
+                    <i class="ti ti-bookmark-off"></i>
+                    <p>Объектов пока нет</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="tab-profile" style="display: none;">
+            <div class="profile-header">
+                <div><h2>Профиль</h2><p>Личные данные и настройки карты</p></div>
+            </div>
+            <form class="profile-form" id="profile-form">
+                <div class="profile-setup-notice" id="profile-setup-notice" hidden>
+                    <i class="ti ti-info-circle"></i>
+                    <span>Первый запуск: заполните профиль. Пароль не нужен, данные сохранятся в этом браузере. До сохранения объекты доступны только для просмотра.</span>
+                </div>
+                <div class="avatar-section">
+                    <div class="avatar" id="avatar-preview"><i class="ti ti-user"></i></div>
+                    <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+                    <button type="button" class="change-avatar-btn" id="change-avatar-btn"><i class="ti ti-camera"></i> Изменить фото</button>
+                </div>
+                <div class="form-group">
+                    <label for="fullname">ФИО *</label>
+                    <input type="text" id="fullname" required autocomplete="name" placeholder="Введите ФИО">
+                </div>
+                <div class="form-group">
+                    <label for="position">Должность *</label>
+                    <select id="position" required>
+                        <option value="Инженер">Инженер</option>
+                        <option value="Специалист">Специалист</option>
+                        <option value="Руководитель">Руководитель</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="farm">Организация *</label>
+                    <input type="text" id="farm" required autocomplete="organization" placeholder="Название организации">
+                </div>
+                <div class="form-group">
+                    <label>Настройки</label>
+                    <div class="settings-group">
+                        <div class="setting-item">
+                            <span>Единицы измерения</span>
+                            <select id="units">
+                                <option value="meters">Метры</option>
+                                <option value="kilometers">Километры</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <span>Тип карты</span>
+                            <select id="default-map-type">
+                                <option value="satellite">Спутник</option>
+                                <option value="schema">Схема</option>
+                            </select>
+                        </div>
+                        <div class="setting-item">
+                            <span>Очистить кэш карт</span>
+                            <button type="button" class="danger-btn" id="clear-cache-btn"><i class="ti ti-trash"></i> Очистить</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="save-btn"><i class="ti ti-device-floppy"></i> Сохранить</button>
+                <button type="button" class="logout-btn" id="logout-btn"><i class="ti ti-logout"></i> Выйти</button>
+            </form>
+        </div>
+
+        <nav class="tab-bar">
+            <button class="tab-btn active" data-tab="map">
+                <span class="tab-icon"><i class="ti ti-map"></i></span>
+                <span class="tab-label">Карта</span>
+            </button>
+            <button class="tab-btn" data-tab="notes">
+                <span class="tab-icon"><i class="ti ti-bookmark"></i></span>
+                <span class="tab-label">Объекты</span>
+            </button>
+            <button class="tab-btn" data-tab="profile">
+                <span class="tab-icon"><i class="ti ti-user"></i></span>
+                <span class="tab-label">Профиль</span>
+            </button>
+        </nav>
+    </div>
+
+    <div class="modal" id="parcel-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Новый объект</h3>
+                <button class="close-btn" id="close-modal"><i class="ti ti-x"></i></button>
+            </div>
+            <form id="parcel-form">
+                <input type="hidden" id="parcel-id">
+                <input type="hidden" id="parcel-coords">
+                <input type="hidden" id="geometry-type">
+                <input type="hidden" id="parcel-location">
+                <div class="location-info" id="location-info" aria-live="polite">
+                    <i class="ti ti-map-pin"></i>
+                    <div><strong id="location-label">Адрес ещё не определён</strong><small>Источник: <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">© OpenStreetMap</a></small></div>
+                    <button type="button" class="lookup-location-btn" id="lookup-location-btn"><i class="ti ti-crosshair"></i> Определить</button>
+                </div>
+                <div class="form-group">
+                    <label for="field-number"><i class="ti ti-number"></i> Номер *</label>
+                    <input type="text" id="field-number" required placeholder="Например, 12">
+                </div>
+                <div class="form-group">
+                    <label for="culture"><i class="ti ti-building-community"></i> Объект инфраструктуры *</label>
+                    <select id="culture" required>
+                        <option value="">Выберите объект</option>
+                        <option value="Газопровод">Газопровод</option>
+                        <option value="ЛЭП">ЛЭП</option>
+                        <option value="Водопровод">Водопровод</option>
+                        <option value="Канализация">Канализация</option>
+                        <option value="Связь">Связь</option>
+                        <option value="Земельный участок">Земельный участок</option>
+                        <option value="Теплосеть">Теплосеть</option>
+                    </select>
+                </div>
+                <div class="form-group infrastructure-measurement" id="diameter-group" hidden>
+                    <label for="diameter">Диаметр, мм</label>
+                    <input type="number" id="diameter" min="0" step="any" inputmode="decimal" placeholder="Например, 110">
+                    <small class="form-hint">Если применимо</small>
+                </div>
+                <div class="form-group infrastructure-measurement" id="burial-depth-group" hidden>
+                    <label for="burial-depth">Глубина заложения, м</label>
+                    <input type="number" id="burial-depth" min="0" step="any" inputmode="decimal" placeholder="Например, 1.2">
+                </div>
+                <div class="form-group">
+                    <label for="note"><i class="ti ti-notes"></i> Описание / заметка</label>
+                    <textarea id="note" maxlength="1000" placeholder="Добавьте описание объекта" rows="4"></textarea>
+                    <span class="char-count"><span id="char-count">0</span>/1000</span>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" id="cancel-parcel"><i class="ti ti-x"></i> Отмена</button>
+                    <button type="submit" class="submit-btn"><i class="ti ti-check"></i> Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal" id="view-parcel-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Объект инфраструктуры</h3>
+                <button class="close-btn" id="close-view-modal"><i class="ti ti-x"></i></button>
+            </div>
+            <div class="parcel-details" id="parcel-details"></div>
+            <p class="read-only-hint" id="parcel-readonly-hint" hidden>Чтобы редактировать объекты, сначала заполните профиль.</p>
+            <div class="form-actions" id="parcel-actions">
+                <button class="delete-btn" id="delete-parcel"><i class="ti ti-trash"></i> Удалить</button>
+                <button class="edit-btn" id="edit-parcel"><i class="ti ti-pencil"></i> Редактировать</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="overlap-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Пересечение объектов</h3>
+                <button class="close-btn" id="close-overlap-modal"><i class="ti ti-x"></i></button>
+            </div>
+            <p>Нарисованная площадь пересекается с существующим объектом. Что вы хотите сделать?</p>
+            <div class="form-actions">
+                <button class="cancel-btn" id="cancel-overlap"><i class="ti ti-x"></i> Отмена</button>
+                <button class="submit-btn" id="edit-existing"><i class="ti ti-pencil"></i> Редактировать</button>
+                <button class="submit-btn" id="create-new"><i class="ti ti-plus"></i> Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal dialog-modal" id="dialog-modal" aria-hidden="true">
+        <section class="modal-content dialog-content" role="alertdialog" aria-modal="true" aria-labelledby="dialog-title" aria-describedby="dialog-message">
+            <div class="dialog-icon" id="dialog-icon"><i class="ti ti-info-circle"></i></div>
+            <div class="dialog-copy">
+                <h3 id="dialog-title">Сообщение</h3>
+                <p id="dialog-message"></p>
+            </div>
+            <div class="dialog-actions">
+                <button type="button" class="cancel-btn" id="dialog-cancel">Отмена</button>
+                <button type="button" class="submit-btn" id="dialog-accept">Понятно</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
